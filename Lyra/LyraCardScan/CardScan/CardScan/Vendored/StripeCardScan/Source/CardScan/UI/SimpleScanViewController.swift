@@ -103,12 +103,11 @@ class SimpleScanViewController: ScanBaseViewController {
     var expiryLayoutView = UIView()
 
     // String
-    static var descriptionString = String.Localized.scan_card_title_capitalization
+    static var descriptionString = String.Localized.scan_card
     static var enableCameraPermissionString = String.Localized.enable_camera_access
     static var enableCameraPermissionsDescriptionString = String.Localized.update_phone_settings
     static var closeButtonString = String.Localized.close
     static var torchButtonString = String.Localized.torch
-    static var privacyLinkString = ""
 
     weak var delegate: SimpleScanDelegate?
     var scanPerformancePriority: ScanPerformance = .fast
@@ -196,7 +195,6 @@ class SimpleScanViewController: ScanBaseViewController {
         setupDescriptionTextUi()
         setupCardDetailsUi()
         setupDenyUi()
-        setupPrivacyLinkTextUi()
 
         if showDebugImageView {
             setupDebugViewUi()
@@ -295,25 +293,6 @@ class SimpleScanViewController: ScanBaseViewController {
         enableCameraPermissionsText.font = enableCameraPermissionsText.font.withSize(17)
         enableCameraPermissionsText.numberOfLines = 3
         enableCameraPermissionsText.isHidden = true
-    }
-
-    func setupPrivacyLinkTextUi() {
-//        if let attributedString = SimpleScanViewController.privacyLinkString {
-//            privacyLinkText.attributedText = attributedString
-//        }
-
-        privacyLinkText.textColor = .white
-        privacyLinkText.textAlignment = .center
-        privacyLinkText.font = descriptionText.font.withSize(14)
-        privacyLinkText.isEditable = false
-        privacyLinkText.dataDetectorTypes = .link
-        privacyLinkText.isScrollEnabled = false
-        privacyLinkText.backgroundColor = .clear
-        privacyLinkText.linkTextAttributes = [
-            .foregroundColor: UIColor.white
-        ]
-        privacyLinkText.accessibilityIdentifier = "Privacy Link Text"
-        privacyLinkText.clipsToBounds = true
     }
 
     func setupDebugViewUi() {

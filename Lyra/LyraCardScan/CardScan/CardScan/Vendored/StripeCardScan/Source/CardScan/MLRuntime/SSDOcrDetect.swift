@@ -11,13 +11,13 @@ import UIKit
 
 /// Documentation for SSD OCR
 
-@_spi(STP) public class SSDOcrDetect {
+class SSDOcrDetect {
     @AtomicProperty var ssdOcrModel: SSDOcr?
     static var priors: [CGRect]?
-
+    
     static var ssdOcrResource = "SSDOcr"
     static let ssdOcrExtension = "mlmodelc"
-
+    
     // SSD Model parameters
     static let sigma: Float = 0.5
     let ssdOcrImageWidth = 600
@@ -29,11 +29,11 @@ import UIKit
     let sizeVariance: Float = 0.2
     let candidateSize = 200
     let topK = 20
-
+    
     // Statistics about last prediction
     var lastDetectedBoxes: [CGRect] = []
     static var hasPrintedInitError = false
-
+    
     func warmUp() {
         SSDOcrDetect.initializeModels()
         UIGraphicsBeginImageContext(
@@ -53,7 +53,7 @@ import UIKit
         )
         let newImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
-
+        
         guard let ssdOcrModel = ssdOcrModel else {
             return
         }
@@ -65,8 +65,8 @@ import UIKit
             _ = try? ssdOcrModel.prediction(input: input)
         }
     }
-
-    @_spi(STP) public static func loadModelFromBundle() -> SSDOcr? {
+    
+    static func loadModelFromBundle() -> SSDOcr? {
         let bundle = Bundle(for: SSDOcrDetect.self)
         guard
             let ssdOcrUrl = bundle.url(
@@ -76,24 +76,24 @@ import UIKit
         else {
             return nil
         }
-
+        
         return try? SSDOcr(contentsOf: ssdOcrUrl)
     }
-
+    
     init() {
         if SSDOcrDetect.priors == nil {
             SSDOcrDetect.priors = OcrPriorsGen.combinePriors()
         }
-
+        
         loadModel()
     }
-
+    
     static func initializeModels() {
         if SSDOcrDetect.priors == nil {
             SSDOcrDetect.priors = OcrPriorsGen.combinePriors()
         }
     }
-
+    
     private func loadModel() {
         let bundle = Bundle(for: SSDOcrDetect.self)
         guard
@@ -104,7 +104,7 @@ import UIKit
         else {
             return
         }
-
+        
         SSDOcr.asyncLoad(contentsOf: ssdOcrUrl) { [weak self] result in
             switch result {
             case .success(let model):
@@ -114,10 +114,10 @@ import UIKit
             }
         }
     }
-
+    
     func detectOcrObjects(prediction: SSDOcrOutput, image: UIImage) -> String? {
         var DetectedOcrBoxes = DetectedAllOcrBoxes()
-
+        
         var (scores, boxes, filterArray) = prediction.getScores(filterThreshold: filterThreshold)
         let regularBoxes = prediction.convertLocationsToBoxes(
             locations: boxes,
@@ -126,18 +126,18 @@ import UIKit
             sizeVariance: sizeVariance
         )
         let cornerFormBoxes = prediction.centerFormToCornerForm(regularBoxes: regularBoxes)
-
+        
         (scores, boxes) = prediction.filterScoresAndBoxes(
             scores: scores,
             boxes: cornerFormBoxes,
             filterArray: filterArray,
             filterThreshold: filterThreshold
         )
-
+        
         if scores.isEmpty || boxes.isEmpty {
             return nil
         }
-
+        
         let result: Result = PredictionUtilOcr().predictionUtil(
             scores: scores,
             boxes: boxes,
@@ -146,7 +146,7 @@ import UIKit
             candidateSize: candidateSize,
             topK: topK
         )
-
+        
         for idx in 0..<result.pickedBoxes.count {
             DetectedOcrBoxes.allBoxes.append(
                 DetectedSSDOcrBox(
@@ -160,11 +160,11 @@ import UIKit
                 )
             )
         }
-
+        
         if !DetectedOcrBoxes.allBoxes.isEmpty {
             self.lastDetectedBoxes = DetectedOcrBoxes.getBoundingBoxesOfDigits()
         }
-
+        
         if OcrDDUtils.isQuickRead(allBoxes: DetectedOcrBoxes) {
             guard let (number, boxes) = OcrDDUtils.processQuickRead(allBoxes: DetectedOcrBoxes)
             else { return nil }
@@ -179,11 +179,11 @@ import UIKit
             self.lastDetectedBoxes = boxes
             return number
         }
-
+        
     }
-
+    
     func predict(image: UIImage) -> String? {
-
+        
         SSDOcrDetect.initializeModels()
         guard
             let pixelBuffer = image.pixelBuffer(
@@ -192,15 +192,15 @@ import UIKit
             )
         else {
             return nil
-
+            
         }
-
+        
         guard let ocrDetectModel = ssdOcrModel else {
             return nil
         }
-
+        
         let input = SSDOcrInput(_0: pixelBuffer)
-
+        
         guard let prediction = try? ocrDetectModel.prediction(input: input) else {
             return nil
         }

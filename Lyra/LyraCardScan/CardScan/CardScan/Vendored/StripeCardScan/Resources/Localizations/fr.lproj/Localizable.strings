@@ -1,9 +1,15 @@
 "Card doesn't match" = "La carte bancaire ne correspond pas";
 
+"Close" = "Fermer";
+
 "Enable camera access" = "Autoriser l'accès à l'appareil photo";
 
 "Enter card details manually" = "Saisir les informations de carte bancaire manuellement";
 
+"There was an unexpected error -- try again in a few seconds" = "Une erreur inattendue est survenue. Réessayez dans quelques secondes.";
+
 "To scan your card you'll need to update your phone settings" = "Pour numériser votre carte bancaire, vous devrez mettre à jour les paramètres de votre téléphone.";
 
 "Torch" = "Torche";
+
+"Scan Card" = "Scanner la carte";

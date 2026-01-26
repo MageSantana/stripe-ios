@@ -1,9 +1,15 @@
 "Card doesn't match" = "La tarjeta no coincide";
 
+"Close" = "Cerrar";
+
 "Enable camera access" = "Permitir acceso a la cámara";
 
 "Enter card details manually" = "Introducir manualmente los datos de la tarjeta";
 
+"There was an unexpected error -- try again in a few seconds" = "Se ha producido un error inesperado. Vuelve a intentarlo en unos segundos";
+
 "To scan your card you'll need to update your phone settings" = "Para escanear la tarjeta, tienes que actualizar los ajustes de tu teléfono";
 
 "Torch" = "Linterna";
+
+"Scan Card" = "Escanear tarjeta";
